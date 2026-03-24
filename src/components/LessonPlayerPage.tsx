@@ -26,6 +26,9 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
   const [currentModuleIndex, setCurrentModuleIndex] = useState(1);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(1);
   const [expandedModules, setExpandedModules] = useState<Record<number, boolean>>({ 1: true });
+  const [isCourseSidebarOpen, setIsCourseSidebarOpen] = useState(true);
+  const [isMainSidebarOpen, setIsMainSidebarOpen] = useState(true);
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
   
   // Mock progress state
   const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({
@@ -112,12 +115,14 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
       <div className="flex h-screen overflow-hidden">
-        <Sidebar activeItem="Mes formations" onNavigate={onNavigate} />
+        <div className={`transition-all duration-300 ease-in-out ${isMainSidebarOpen ? "w-72" : "w-0 overflow-hidden"}`}>
+          <Sidebar activeItem="Mes formations" onNavigate={onNavigate} />
+        </div>
 
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden relative">
           {/* COURSE SIDEBAR */}
-          <aside className="flex w-[380px] shrink-0 flex-col border-r border-slate-200 bg-white">
-            <div className="border-b border-slate-200 px-8 py-8">
+          <aside className={`flex flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out ${isCourseSidebarOpen ? "w-[380px]" : "w-0 overflow-hidden border-none"}`}>
+            <div className="border-b border-slate-200 px-8 py-8 min-w-[380px]">
               <div className="mb-6 flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-lg font-bold text-white shadow-lg shadow-slate-900/20">
                   FC
@@ -142,7 +147,7 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-8">
+            <div className="flex-1 overflow-y-auto px-6 py-8 min-w-[380px]">
               <div className="mb-6 flex items-center justify-between px-2">
                 <h2 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                   Programme du cours
@@ -245,7 +250,25 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
           </aside>
 
           {/* PLAYER MAIN AREA */}
-          <main className="flex flex-1 flex-col overflow-hidden bg-slate-50">
+          <main className="flex flex-1 flex-col overflow-hidden bg-slate-50 relative">
+            {/* Main Sidebar Toggle Button */}
+            <button 
+              onClick={() => setIsMainSidebarOpen(!isMainSidebarOpen)}
+              className={`absolute left-0 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-400 hover:text-slate-900 transition-all ${isMainSidebarOpen ? "translate-x-[-20px]" : "translate-x-4"}`}
+              title={isMainSidebarOpen ? "Masquer le menu principal" : "Afficher le menu principal"}
+            >
+              {isMainSidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            </button>
+
+            {/* Course Sidebar Toggle Button */}
+            <button 
+              onClick={() => setIsCourseSidebarOpen(!isCourseSidebarOpen)}
+              className={`absolute left-0 top-1/2 z-50 flex h-12 w-8 -translate-y-1/2 items-center justify-center rounded-r-xl bg-white border border-l-0 border-slate-200 shadow-md text-slate-400 hover:text-slate-900 transition-all ${!isCourseSidebarOpen ? "translate-x-0" : "translate-x-[-1px]"}`}
+              title={isCourseSidebarOpen ? "Masquer le programme" : "Afficher le programme"}
+            >
+              {isCourseSidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            </button>
+
             {/* Player Header */}
             <header className="flex items-center justify-between border-b border-slate-200 bg-white px-10 py-6">
               <div className="flex-1 min-w-0">
@@ -275,12 +298,12 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
               </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto px-10 py-10">
-              <div className="mx-auto max-w-6xl space-y-10">
+            <div className="flex-1 overflow-y-auto px-6 py-6 lg:px-10 lg:py-10">
+              <div className={`${(isCourseSidebarOpen || isMainSidebarOpen) && !isTheaterMode ? "max-w-6xl" : "max-w-none"} mx-auto space-y-10 transition-all duration-300`}>
                 {/* MEDIA PLAYER SECTION */}
-                <section className="grid gap-8 xl:grid-cols-[1fr_380px]">
+                <section className={`grid gap-8 ${isTheaterMode ? "grid-cols-1" : isCourseSidebarOpen ? "xl:grid-cols-[1fr_380px]" : "xl:grid-cols-[1fr_400px]"}`}>
                   <div className="space-y-6">
-                    <div className="relative aspect-video overflow-hidden rounded-[40px] bg-slate-900 shadow-2xl ring-1 ring-slate-200">
+                    <div className={`relative aspect-video overflow-hidden rounded-[40px] bg-slate-900 shadow-2xl ring-1 ring-slate-200 ${!isCourseSidebarOpen && !isMainSidebarOpen ? "scale-[1.01]" : ""} transition-all duration-300`}>
                       {activeResource === "PDF" ? (
                         <div className="flex h-full w-full flex-col items-center justify-center bg-slate-100 p-12 text-center">
                           <div className="mb-6 rounded-3xl bg-white p-6 shadow-xl shadow-slate-200/50">
@@ -345,33 +368,58 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
                         </div>
                       ) : (
                         <div className="group relative flex h-full w-full items-center justify-center bg-slate-800">
-                          <div className="absolute inset-0 bg-slate-900/20" />
-                          <button className="relative flex h-24 w-24 items-center justify-center rounded-full bg-white text-slate-900 shadow-2xl">
+                          <div className="absolute inset-0 bg-slate-900/40" />
+                          <button className="relative flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md border border-white/30 shadow-2xl transition-transform hover:scale-110">
                             <Play className="h-10 w-10 fill-current" />
                           </button>
-                          <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between text-white">
-                            <div className="flex items-center gap-6">
-                              <Volume2 className="h-6 w-6 cursor-pointer" />
-                              <span className="text-sm font-black tracking-widest">00:00 / {currentLesson.duration}</span>
+                          
+                          {/* Premium Video Controls */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            {/* Progress Bar */}
+                            <div className="relative mb-6 h-1.5 w-full cursor-pointer rounded-full bg-white/20">
+                              <div className="absolute left-0 top-0 h-full w-1/3 rounded-full bg-slate-400" />
+                              <div className="absolute left-1/3 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-lg" />
                             </div>
-                            <div className="flex items-center gap-6">
-                              <Settings className="h-6 w-6 cursor-pointer" />
-                              <ExternalLink className="h-6 w-6 cursor-pointer" />
+                            
+                            <div className="flex items-center justify-between text-white">
+                              <div className="flex items-center gap-8">
+                                <button className="hover:text-slate-300">
+                                  <Play className="h-6 w-6 fill-current" />
+                                </button>
+                                <div className="flex items-center gap-4">
+                                  <Volume2 className="h-6 w-6 cursor-pointer hover:text-slate-300" />
+                                  <div className="h-1 w-20 rounded-full bg-white/20">
+                                    <div className="h-full w-1/2 rounded-full bg-white" />
+                                  </div>
+                                </div>
+                                <span className="text-xs font-black tracking-widest">04:12 / {currentLesson.duration}</span>
+                              </div>
+                              <div className="flex items-center gap-8">
+                                <button 
+                                  onClick={() => setIsTheaterMode(!isTheaterMode)}
+                                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${isTheaterMode ? "bg-white text-slate-900" : "bg-white/10 text-white hover:bg-white/20 border border-white/20"}`}
+                                >
+                                  {isTheaterMode ? "Quitter Cinéma" : "Mode Cinéma"}
+                                </button>
+                                <Settings className="h-6 w-6 cursor-pointer hover:text-slate-300" />
+                                <ExternalLink className="h-6 w-6 cursor-pointer hover:text-slate-300" />
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-3">
+                    <div className={`grid gap-6 ${isTheaterMode ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
                       <MiniStat label="Format" value={currentLesson.type} />
                       <MiniStat label="Durée" value={currentLesson.duration} />
                       <MiniStat label="Statut" value={isLessonCompleted ? "Terminé" : "En cours"} />
+                      {isTheaterMode && <MiniStat label="Module" value={modules[currentModuleIndex].title.split('—')[0]} />}
                     </div>
                   </div>
 
                   {/* TASKS & COMPLETION */}
-                  <div className="space-y-6">
+                  <div className={`space-y-6 ${isTheaterMode ? "grid grid-cols-1 md:grid-cols-2 gap-6 space-y-0" : ""}`}>
                     <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
                       <h3 className="text-2xl font-black tracking-tight text-slate-900">Objectifs</h3>
                       <p className="mt-2 text-sm font-medium text-slate-500">Complétez ces étapes pour valider la leçon.</p>
@@ -415,7 +463,7 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
                 </section>
 
                 {/* RESOURCES & NOTES */}
-                <section className="grid gap-8 xl:grid-cols-[1fr_450px]">
+                <section className={`grid gap-8 ${isTheaterMode ? "grid-cols-1" : "xl:grid-cols-[1fr_450px]"}`}>
                   <div className="rounded-[40px] border border-slate-200 bg-white p-10 shadow-sm">
                     <div className="mb-8 flex items-center gap-4 border-b border-slate-100 pb-6">
                       <TabButton label="Ressources" active onClick={onOpenResources} />

@@ -1,4 +1,5 @@
 import { Sidebar } from "./Sidebar";
+import { Play } from "lucide-react";
 
 export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBack: () => void; onStart?: () => void; onNavigate?: (view: any) => void }) {
   const isPurchased = true;
@@ -116,16 +117,23 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-4">
-                <div className="flex h-[320px] items-center justify-center rounded-[24px] bg-slate-200 text-sm font-medium text-slate-500">
-                  Vidéo ou preview formation
-                </div>
-                <div className="mt-4 flex items-center justify-between rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200">
-                  <div>
-                    <p className="text-sm font-semibold">Votre progression</p>
-                    <p className="text-sm text-slate-500">Leçon actuelle : Structurer une offre</p>
+              <div className="rounded-[28px] border border-slate-200 bg-slate-900 p-4 shadow-2xl">
+                <div className="relative aspect-video overflow-hidden rounded-[24px] bg-slate-800 flex items-center justify-center group cursor-pointer">
+                  <div className="absolute inset-0 bg-slate-900/40" />
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md border border-white/30 shadow-2xl transition-transform group-hover:scale-110">
+                    <Play className="h-8 w-8 fill-current" />
                   </div>
-                  <div className="text-lg font-bold">38%</div>
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white/60 text-[10px] font-black uppercase tracking-widest">
+                    <span>Aperçu de la formation</span>
+                    <span>02:45</span>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-white/10">
+                  <div>
+                    <p className="text-sm font-semibold text-white">Votre progression</p>
+                    <p className="text-sm text-slate-400">Leçon actuelle : Structurer une offre</p>
+                  </div>
+                  <div className="text-lg font-bold text-white">38%</div>
                 </div>
               </div>
             </div>
