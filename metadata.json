@@ -1,0 +1,5 @@
+{
+  "name": "UI Dashboard Converter",
+  "description": "An application to view and export React UI components as HTML.",
+  "requestFramePermissions": []
+}
