@@ -76,7 +76,7 @@ export default function ProfileSettingsPage({
               </p>
             </div>
 
-            <button className="flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 shadow-lg shadow-slate-900/10">
+            <button className="flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10">
               <Save className="h-4 w-4" />
               Enregistrer les modifications
             </button>
@@ -105,7 +105,7 @@ export default function ProfileSettingsPage({
                       </label>
                       <input
                         defaultValue={field.value}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none"
                       />
                     </div>
                   ))}
@@ -124,10 +124,10 @@ export default function ProfileSettingsPage({
                   Ajoutez ou modifiez votre avatar pour personnaliser votre espace étudiant.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <button className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition hover:opacity-90">
+                  <button className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white">
                     Télécharger une photo
                   </button>
-                  <button className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+                  <button className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700">
                     <Trash2 className="h-4 w-4" />
                     Supprimer
                   </button>
@@ -156,7 +156,7 @@ export default function ProfileSettingsPage({
                   </div>
                 </div>
 
-                <button className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 w-full sm:w-auto">
+                <button className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white w-full sm:w-auto">
                   <Shield className="h-4 w-4" />
                   Mettre à jour le mot de passe
                 </button>
@@ -185,7 +185,7 @@ export default function ProfileSettingsPage({
                   {notifications.map((item) => (
                     <div 
                       key={item.id} 
-                      className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 sm:flex-row sm:items-center sm:justify-between transition hover:border-slate-200"
+                      className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="max-w-md">
                         <h4 className="text-sm font-bold text-slate-900">{item.title}</h4>
@@ -193,7 +193,7 @@ export default function ProfileSettingsPage({
                       </div>
                       <button
                         onClick={() => toggleNotification(item.id)}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent focus:outline-none ${
                           item.enabled ? "bg-slate-900" : "bg-slate-200"
                         }`}
                         role="switch"
@@ -201,7 +201,7 @@ export default function ProfileSettingsPage({
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 ${
                             item.enabled ? "translate-x-5" : "translate-x-0"
                           }`}
                         />
@@ -227,17 +227,17 @@ export default function ProfileSettingsPage({
                     Vous pourrez ensuite ajouter ici la langue de l’interface, le fuseau horaire, les préférences d’accessibilité ou la gestion des sessions actives.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <button className="rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-100">
+                    <button className="rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-900">
                       Enregistrer les paramètres
                     </button>
-                    <button className="flex items-center gap-2 rounded-2xl bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/20">
+                    <button className="flex items-center gap-2 rounded-2xl bg-white/10 px-6 py-3 text-sm font-bold text-white">
                       <LogOut className="h-4 w-4" />
                       Déconnexion
                     </button>
                   </div>
                 </div>
                 {/* Subtle background glow */}
-                <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
+                <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-white/5" />
               </div>
             </section>
           </div>
@@ -254,7 +254,7 @@ function Field({ label, placeholder }: { label: string; placeholder: string }) {
       <input
         type="password"
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none"
       />
     </div>
   );

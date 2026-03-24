@@ -86,7 +86,7 @@ export default function MessagingPage({
                 <input 
                   type="text" 
                   placeholder="Rechercher..." 
-                  className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-slate-900 transition"
+                  className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none shadow-sm"
                 />
               </div>
             </div>
@@ -97,10 +97,10 @@ export default function MessagingPage({
                   <button
                     key={conv.id}
                     onClick={() => setActiveConv(conv.id)}
-                    className={`group w-full rounded-2xl p-4 text-left transition-all duration-200 ${
+                    className={`group w-full rounded-2xl p-4 text-left ${
                       activeConv === conv.id 
                         ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" 
-                        : "hover:bg-slate-50"
+                        : ""
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -154,13 +154,13 @@ export default function MessagingPage({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="rounded-xl p-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-900 transition">
+                <button className="rounded-xl p-2.5 text-slate-400">
                   <Phone className="h-5 w-5" />
                 </button>
-                <button className="rounded-xl p-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-900 transition">
+                <button className="rounded-xl p-2.5 text-slate-400">
                   <Video className="h-5 w-5" />
                 </button>
-                <button className="rounded-xl p-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-900 transition">
+                <button className="rounded-xl p-2.5 text-slate-400">
                   <MoreVertical className="h-5 w-5" />
                 </button>
               </div>
@@ -201,8 +201,8 @@ export default function MessagingPage({
 
             {/* Chat Input */}
             <div className="border-t border-slate-200 bg-white p-6">
-              <div className="flex items-center gap-3 rounded-[24px] border border-slate-200 bg-slate-50 p-2 pl-4 focus-within:border-slate-900 focus-within:ring-1 focus-within:ring-slate-900 transition-all">
-                <button className="text-slate-400 hover:text-slate-600 transition">
+              <div className="flex items-center gap-3 rounded-[24px] border border-slate-200 bg-slate-50 p-2 pl-4">
+                <button className="text-slate-400">
                   <Paperclip className="h-5 w-5" />
                 </button>
                 <input
@@ -213,12 +213,12 @@ export default function MessagingPage({
                   placeholder="Écrire un message..."
                   className="flex-1 bg-transparent py-2 text-sm font-medium outline-none placeholder:text-slate-400"
                 />
-                <button className="text-slate-400 hover:text-slate-600 transition">
+                <button className="text-slate-400">
                   <Smile className="h-5 w-5" />
                 </button>
                 <button 
                   onClick={handleSendMessage}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white shadow-lg shadow-slate-900/20 transition hover:scale-105 active:scale-95"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white shadow-lg shadow-slate-900/20"
                 >
                   <Send className="h-4 w-4" />
                 </button>

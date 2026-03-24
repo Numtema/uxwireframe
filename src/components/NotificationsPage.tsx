@@ -83,7 +83,7 @@ export default function NotificationsPage({
 
             <button 
               onClick={markAllAsRead}
-              className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition shadow-sm"
+              className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm"
             >
               <Check className="h-4 w-4" />
               Tout marquer comme lu
@@ -94,14 +94,14 @@ export default function NotificationsPage({
             {notifications.map((notif) => (
               <div
                 key={notif.id}
-                className={`group relative rounded-[28px] border p-6 transition duration-300 ${
+                className={`relative rounded-[28px] border p-6 ${
                   notif.unread
                     ? "border-slate-900 bg-white shadow-lg shadow-slate-900/5 ring-1 ring-slate-900/5"
-                    : "border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300"
+                    : "border-slate-200 bg-slate-50/50"
                 }`}
               >
                 <div className="flex items-start gap-5">
-                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors duration-300 ${
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
                     notif.unread ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-500"
                   }`}>
                     {notif.icon}
@@ -113,21 +113,21 @@ export default function NotificationsPage({
                         {notif.type}
                       </span>
                       {notif.unread && (
-                        <span className="flex h-2 w-2 rounded-full bg-slate-900 animate-pulse" />
+                        <span className="flex h-2 w-2 rounded-full bg-slate-900" />
                       )}
                     </div>
                     <h3 className="text-xl font-bold text-slate-900">{notif.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-slate-600">{notif.message}</p>
                     
                     <div className="mt-6 flex flex-wrap items-center gap-3">
-                      <button className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+                      <button className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700">
                         <Eye className="h-3.5 w-3.5" />
                         Voir les détails
                       </button>
                       {notif.unread && (
                         <button 
                           onClick={() => markAsRead(notif.id)}
-                          className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:opacity-90 transition"
+                          className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
                         >
                           <Check className="h-3.5 w-3.5" />
                           Marquer comme lu

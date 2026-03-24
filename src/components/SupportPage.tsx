@@ -66,11 +66,11 @@ export default function SupportPage({
                   {faqs.map((item, i) => (
                     <div 
                       key={i} 
-                      className="group rounded-[24px] border border-slate-200 bg-white p-6 transition-all hover:border-slate-900 hover:shadow-md"
+                      className="group rounded-[24px] border border-slate-200 bg-white p-6"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <p className="font-bold text-slate-900 text-lg">{item.q}</p>
-                        <ChevronRight className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-slate-900" />
+                        <ChevronRight className="h-5 w-5 shrink-0 text-slate-300" />
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-slate-600">{item.a}</p>
                     </div>
@@ -99,11 +99,11 @@ export default function SupportPage({
                       <label className="mb-2 block text-sm font-bold text-slate-700">Message détaillé</label>
                       <textarea
                         placeholder="Décrivez votre problème avec le plus de détails possible..."
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium outline-none h-40 transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm font-medium outline-none h-40"
                       />
                     </div>
 
-                    <button className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 py-4 text-sm font-bold text-white transition hover:opacity-90 shadow-lg shadow-slate-900/10">
+                    <button className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-6 py-4 text-sm font-bold text-white shadow-lg shadow-slate-900/10">
                       <Send className="h-4 w-4" />
                       Envoyer ma demande
                     </button>
@@ -139,7 +139,7 @@ function Field({ label, placeholder, icon }: { label: string; placeholder: strin
       </label>
       <input
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium outline-none"
       />
     </div>
   );

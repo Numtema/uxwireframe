@@ -113,14 +113,14 @@ export default function CourseCatalogPage({
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm focus-within:ring-1 focus-within:ring-slate-900 transition">
+              <div className="flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                 <Search className="mr-2 h-4 w-4 text-slate-400" />
                 <input
                   className="w-64 bg-transparent text-sm outline-none placeholder:text-slate-400"
                   placeholder="Rechercher une formation..."
                 />
               </div>
-              <button className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 shadow-sm">
+              <button className="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
                 <Filter className="h-4 w-4" />
                 Trier
               </button>
@@ -128,7 +128,7 @@ export default function CourseCatalogPage({
           </div>
 
           {/* Featured Course */}
-          <section className="mb-8 rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm overflow-hidden group">
+          <section className="mb-8 rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm overflow-hidden">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -147,13 +147,13 @@ export default function CourseCatalogPage({
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button 
                     onClick={() => onNavigate?.("course")}
-                    className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 shadow-lg shadow-slate-900/10"
+                    className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10"
                   >
                     Voir les détails
                   </button>
                   <button 
                     onClick={() => onNavigate?.("checkout")}
-                    className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 shadow-sm"
+                    className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm"
                   >
                     Acheter maintenant
                   </button>
@@ -165,7 +165,7 @@ export default function CourseCatalogPage({
                   <img 
                     src="https://picsum.photos/seed/featured/800/450" 
                     alt="Featured Course" 
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover"
                     referrerPolicy="no-referrer"
                   />
                 </div>
@@ -180,10 +180,10 @@ export default function CourseCatalogPage({
               {categories.map((category, index) => (
                 <button
                   key={category}
-                  className={`rounded-full px-5 py-2.5 text-sm font-bold transition shadow-sm ${
+                  className={`rounded-full px-5 py-2.5 text-sm font-bold shadow-sm ${
                     index === 0
                       ? "bg-slate-900 text-white"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                      : "border border-slate-200 bg-white text-slate-700"
                   }`}
                 >
                   {category}
@@ -203,17 +203,17 @@ export default function CourseCatalogPage({
               {courses.map((course) => (
                 <article
                   key={course.id}
-                  className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm"
                 >
                   <div className="relative aspect-video overflow-hidden bg-slate-100">
                     <img 
                       src={course.image} 
                       alt={course.title} 
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                      className="h-full w-full object-cover"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-slate-900/10 transition group-hover:bg-slate-900/0" />
-                    <span className="absolute left-4 top-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-900 shadow-sm">
+                    <div className="absolute inset-0 bg-slate-900/10" />
+                    <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-900 shadow-sm">
                       {course.badge}
                     </span>
                   </div>
@@ -226,7 +226,7 @@ export default function CourseCatalogPage({
                       <span className="text-base font-bold text-slate-900">{course.price}</span>
                     </div>
 
-                    <h4 className="text-xl font-bold leading-tight group-hover:text-slate-700 transition">
+                    <h4 className="text-xl font-bold leading-tight">
                       {course.title}
                     </h4>
                     <p className="mt-2 text-sm text-slate-500 font-medium">{course.level}</p>
@@ -240,16 +240,16 @@ export default function CourseCatalogPage({
                     <div className="mt-6 flex gap-3">
                       <button 
                         onClick={() => onNavigate?.("course")}
-                        className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                        className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-xs font-bold text-slate-700"
                       >
                         Voir détail
                       </button>
                       <button
                         onClick={() => !course.enrolled && onNavigate?.("checkout")}
-                        className={`flex-1 rounded-2xl px-4 py-3 text-xs font-bold transition flex items-center justify-center gap-2 ${
+                        className={`flex-1 rounded-2xl px-4 py-3 text-xs font-bold flex items-center justify-center gap-2 ${
                           course.enrolled
                             ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                            : "bg-slate-900 text-white hover:opacity-90 shadow-md shadow-slate-900/10"
+                            : "bg-slate-900 text-white shadow-md shadow-slate-900/10"
                         }`}
                       >
                         {course.enrolled ? (

@@ -67,7 +67,7 @@ export default function CertificatesPage({
                 <input 
                   type="text" 
                   placeholder="Rechercher un diplôme..." 
-                  className="w-full md:w-64 rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900 shadow-sm"
+                  className="w-full md:w-64 rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none shadow-sm"
                 />
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function CertificatesPage({
               {certificates.map((cert) => (
                 <div
                   key={cert.id}
-                  className="group relative flex flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-xl hover:-translate-y-1"
+                  className="relative flex flex-col rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm"
                 >
                   <div className="mb-6 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -96,11 +96,11 @@ export default function CertificatesPage({
                     </span>
                   </div>
 
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 ring-1 ring-slate-200 group-hover:bg-slate-900 group-hover:text-white transition duration-300">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-400 ring-1 ring-slate-200">
                     <Trophy className="h-7 w-7" />
                   </div>
 
-                  <h3 className="text-xl font-bold leading-tight text-slate-900 group-hover:text-slate-700 transition">
+                  <h3 className="text-xl font-bold leading-tight text-slate-900">
                     {cert.title}
                   </h3>
 
@@ -112,15 +112,15 @@ export default function CertificatesPage({
                   </div>
 
                   <div className="mt-8 flex gap-3">
-                    <button className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300">
+                    <button className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700">
                       <Eye className="h-3.5 w-3.5" />
                       Voir
                     </button>
                     <button
                       disabled={cert.status !== "Validé"}
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-bold transition ${
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-bold ${
                         cert.status === "Validé"
-                          ? "bg-slate-900 text-white hover:opacity-90 shadow-lg shadow-slate-900/10"
+                          ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
                           : "bg-slate-100 text-slate-400 cursor-not-allowed"
                       }`}
                     >
@@ -142,7 +142,7 @@ export default function CertificatesPage({
                 </p>
                 <button 
                   onClick={onBackToDashboard}
-                  className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-slate-900 hover:gap-3 transition-all"
+                  className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-slate-900"
                 >
                   Reprendre les cours
                   <ArrowRight className="h-3 w-3" />

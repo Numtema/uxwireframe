@@ -70,7 +70,7 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
         <Sidebar activeItem="Mes formations" onNavigate={onNavigate} />
 
         <main className="flex-1 px-8 py-8">
-          <button onClick={onBack} className="mb-6 text-sm text-slate-500 hover:text-slate-900">
+          <button onClick={onBack} className="mb-6 text-sm text-slate-500">
             ← Retour aux formations
           </button>
 
@@ -106,11 +106,11 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
                 <div className="mt-8 flex flex-wrap gap-3">
                   <button
                     onClick={onStart}
-                    className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                    className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white"
                   >
                     {ctaLabel}
                   </button>
-                  <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                  <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700">
                     Ajouter aux favoris
                   </button>
                 </div>
@@ -161,7 +161,7 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
                 <h3 className="text-2xl font-bold">Programme de la formation</h3>
                 <p className="mt-1 text-sm text-slate-500">Chaque module contient des leçons, des ressources et un quiz dédié.</p>
               </div>
-              <button className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+              <button className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">
                 Tout déplier
               </button>
             </div>
@@ -215,7 +215,7 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
                             Validation du module avec questions, score et déblocage de progression.
                           </p>
                         </div>
-                        <button className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+                        <button className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">
                           Voir le quiz
                         </button>
                       </div>
@@ -246,7 +246,7 @@ export default function CourseDetailPage({ onBack, onStart, onNavigate }: { onBa
               </p>
               <button
                 onClick={onStart}
-                className="mt-6 rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:opacity-90"
+                className="mt-6 rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-slate-900"
               >
                 {ctaLabel}
               </button>

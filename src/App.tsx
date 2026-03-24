@@ -12,23 +12,83 @@ import ProfileSettingsPage from "./components/ProfileSettingsPage";
 import NotificationsPage from "./components/NotificationsPage";
 import SupportPage from "./components/SupportPage";
 import MessagingPage from "./components/MessagingPage";
+import QuizResultPage from "./components/QuizResultPage";
 
 export default function App() {
-  const [view, setView] = useState<"dashboard" | "lesson" | "course" | "player" | "quiz" | "certificates" | "payment-history" | "checkout" | "catalog" | "profile" | "notifications" | "support" | "messaging">("dashboard");
+  const [view, setView] = useState<"dashboard" | "lesson" | "course" | "player" | "quiz" | "certificates" | "payment-history" | "checkout" | "catalog" | "profile" | "notifications" | "support" | "messaging" | "quiz-result">("dashboard");
+  const [lastQuizResult, setLastQuizResult] = useState<any>(null);
   const componentRef = useRef<HTMLDivElement>(null);
 
   const exportHTML = () => {
     if (componentRef.current) {
-      const htmlContent = componentRef.current.innerHTML;
+      // Collect all styles from the current document
+      const styleTags = Array.from(document.getElementsByTagName('style'))
+        .map(style => style.outerHTML)
+        .join('\n');
+      
+      const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+        .map(link => link.outerHTML)
+        .join('\n');
+
+      // Create a clean clone of the component to export
+      const clone = componentRef.current.cloneNode(true) as HTMLElement;
+      
+      const htmlContent = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nümtema Learn - ${view.charAt(0).toUpperCase() + view.slice(1)}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  ${linkTags}
+  ${styleTags}
+  <style>
+    :root {
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: var(--font-sans);
+      background-color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    * { box-sizing: border-box; }
+    #export-root {
+      min-height: 100vh;
+    }
+    /* Remove any remaining transitions/animations in export */
+    * { 
+      transition: none !important; 
+      animation: none !important; 
+      transform: none !important; 
+    }
+  </style>
+</head>
+<body>
+  <div id="export-root">
+    ${clone.innerHTML}
+  </div>
+</body>
+</html>`;
+
       const blob = new Blob([htmlContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
       a.href = url;
-      a.download = `${view}-export.html`;
+      a.download = `numtema-learn-${view}-${timestamp}.html`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
   };
+
+  const [showVercelModal, setShowVercelModal] = useState(false);
 
   const renderView = () => {
     switch (view) {
@@ -41,7 +101,24 @@ export default function App() {
       case "player":
         return <LessonPlayerPage onOpenQuiz={() => setView("quiz")} onOpenResources={() => setView("lesson")} onNavigate={setView} />;
       case "quiz":
-        return <QuizModulePage onBack={() => setView("player")} onNavigate={setView} />;
+        return (
+          <QuizModulePage 
+            onBack={() => setView("player")} 
+            onNavigate={setView} 
+            onComplete={(result) => {
+              setLastQuizResult(result);
+              setView("quiz-result");
+            }} 
+          />
+        );
+      case "quiz-result":
+        return (
+          <QuizResultPage 
+            result={lastQuizResult} 
+            onNavigate={setView} 
+            onRetry={() => setView("quiz")} 
+          />
+        );
       case "certificates":
         return <CertificatesPage onBackToDashboard={() => setView("dashboard")} onNavigate={setView} />;
       case "payment-history":
@@ -65,98 +142,114 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white p-4">
-        <h1 className="text-xl font-bold">UI Converter</h1>
-        <div className="flex gap-2">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 bg-white/80 px-6 py-4 backdrop-blur-md">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white font-black shadow-lg shadow-slate-900/20">
+            NL
+          </div>
+          <div>
+            <h1 className="text-lg font-black tracking-tight text-slate-900">Nümtema Learn</h1>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Admin Preview</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
+          <NavButton active={view === "dashboard"} onClick={() => setView("dashboard")} label="Dashboard" />
+          <NavButton active={view === "player"} onClick={() => setView("player")} label="Player" />
+          <NavButton active={view === "catalog"} onClick={() => setView("catalog")} label="Catalogue" />
+          <NavButton active={view === "messaging"} onClick={() => setView("messaging")} label="Messages" />
+          <NavButton active={view === "quiz"} onClick={() => setView("quiz")} label="Quiz" />
+          <NavButton active={view === "certificates"} onClick={() => setView("certificates")} label="Certificats" />
+          <NavButton active={view === "profile"} onClick={() => setView("profile")} label="Profil" />
+        </div>
+
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setView("dashboard")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "dashboard" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
+            onClick={() => setShowVercelModal(true)}
+            className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-black uppercase tracking-widest text-slate-900 ring-1 ring-slate-200"
           >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setView("lesson")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "lesson" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Lesson View
-          </button>
-          <button
-            onClick={() => setView("course")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "course" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Course Detail
-          </button>
-          <button
-            onClick={() => setView("player")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "player" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Lesson Player
-          </button>
-          <button
-            onClick={() => setView("quiz")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "quiz" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Quiz Module
-          </button>
-          <button
-            onClick={() => setView("certificates")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "certificates" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Certificates
-          </button>
-          <button
-            onClick={() => setView("payment-history")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "payment-history" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            History
-          </button>
-          <button
-            onClick={() => setView("checkout")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "checkout" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Checkout
-          </button>
-          <button
-            onClick={() => setView("catalog")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "catalog" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Catalog
-          </button>
-          <button
-            onClick={() => setView("profile")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "profile" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Profile
-          </button>
-          <button
-            onClick={() => setView("notifications")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "notifications" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Notifications
-          </button>
-          <button
-            onClick={() => setView("support")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "support" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Support
-          </button>
-          <button
-            onClick={() => setView("messaging")}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold ${view === "messaging" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"}`}
-          >
-            Messages
+            <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+              <path d="M24 22.525H0L12 1.475L24 22.525Z" />
+            </svg>
+            Publier
           </button>
           <button
             onClick={exportHTML}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-slate-900/20"
           >
-            Export HTML
+            Exporter HTML
           </button>
         </div>
       </header>
-      <div ref={componentRef}>
+
+      <div ref={componentRef} className="relative">
         {renderView()}
       </div>
+
+      {/* Vercel Deployment Modal */}
+      {showVercelModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-6">
+          <div className="w-full max-w-md overflow-hidden rounded-[40px] bg-white shadow-2xl">
+            <div className="bg-slate-900 p-10 text-white">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10">
+                <svg className="h-8 w-8 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 22.525H0L12 1.475L24 22.525Z" />
+                </svg>
+              </div>
+              <h3 className="text-3xl font-black tracking-tight">Publier sur Vercel</h3>
+              <p className="mt-4 text-slate-400 font-medium leading-relaxed">
+                Prêt à mettre votre plateforme en ligne ? Voici comment procéder :
+              </p>
+            </div>
+            
+            <div className="p-10 space-y-8">
+              <div className="space-y-6">
+                <Step number="1" text="Exportez votre projet au format ZIP via le menu Paramètres de l'éditeur." />
+                <Step number="2" text="Importez le dossier sur votre compte GitHub." />
+                <Step number="3" text="Connectez votre dépôt GitHub à Vercel." />
+                <Step number="4" text="Vercel détectera automatiquement la configuration Vite et publiera votre site." />
+              </div>
+
+              <div className="rounded-3xl bg-slate-50 p-6 text-sm font-medium text-slate-600 ring-1 ring-slate-100">
+                <strong>Note :</strong> Le fichier <code className="text-slate-900">vercel.json</code> a déjà été ajouté à la racine pour assurer le bon fonctionnement des routes.
+              </div>
+
+              <button
+                onClick={() => setShowVercelModal(false)}
+                className="w-full rounded-2xl bg-slate-900 py-4 text-sm font-black uppercase tracking-widest text-white"
+              >
+                Compris
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NavButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest ${
+        active 
+          ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20" 
+          : "text-slate-400"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function Step({ number, text }: { number: string; text: string }) {
+  return (
+    <div className="flex gap-4">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-black text-slate-900">
+        {number}
+      </div>
+      <p className="text-sm font-bold leading-relaxed text-slate-700">{text}</p>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { 
   Play, 
@@ -12,62 +12,85 @@ import {
   StickyNote,
   ExternalLink,
   Volume2,
-  Settings
+  Settings,
+  Lock,
+  ChevronDown,
+  ChevronUp,
+  Circle,
+  CheckCircle,
+  Award
 } from "lucide-react";
 
 export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNavigate }: { onOpenQuiz?: () => void; onOpenResources?: () => void; onNavigate?: (view: any) => void }) {
   const [activeResource, setActiveResource] = useState<string | null>(null);
-  const currentModuleIndex = 1;
-  const currentLessonIndex = 1;
+  const [currentModuleIndex, setCurrentModuleIndex] = useState(1);
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(1);
+  const [expandedModules, setExpandedModules] = useState<Record<number, boolean>>({ 1: true });
+  
+  // Mock progress state
+  const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({
+    "0-0": true, "0-1": true, "0-2": true,
+    "1-0": true
+  });
 
   const modules = [
     {
       title: "Module 1 — Fondations du copywriting",
-      completed: true,
-      quizUnlocked: true,
-      quizCompleted: true,
       lessons: [
-        { title: "Introduction", type: "Vidéo", duration: "12 min", completed: true },
-        { title: "Comprendre le marché", type: "Vidéo", duration: "18 min", completed: true },
-        { title: "Identifier la douleur client", type: "Live", duration: "45 min", completed: true },
+        { title: "Introduction", type: "Vidéo", duration: "12 min" },
+        { title: "Comprendre le marché", type: "Vidéo", duration: "18 min" },
+        { title: "Identifier la douleur client", type: "Live", duration: "45 min" },
       ],
     },
     {
       title: "Module 2 — Structurer une offre",
-      completed: false,
-      quizUnlocked: false,
-      quizCompleted: false,
       lessons: [
-        { title: "Créer une promesse forte", type: "Vidéo", duration: "16 min", completed: true },
-        { title: "Formuler la valeur", type: "Vidéo", duration: "14 min", completed: false, current: true },
-        { title: "Éviter les objections", type: "Vidéo", duration: "20 min", completed: false },
+        { title: "Créer une promesse forte", type: "Vidéo", duration: "16 min" },
+        { title: "Formuler la valeur", type: "Vidéo", duration: "14 min" },
+        { title: "Éviter les objections", type: "Vidéo", duration: "20 min" },
       ],
     },
     {
       title: "Module 3 — Pages qui convertissent",
-      completed: false,
-      quizUnlocked: false,
-      quizCompleted: false,
       lessons: [
-        { title: "Hero section", type: "Vidéo", duration: "11 min", completed: false },
-        { title: "Blocs de preuve", type: "Live", duration: "50 min", completed: false },
-        { title: "Call-to-action", type: "Vidéo", duration: "13 min", completed: false },
-      ],
-    },
-    {
-      title: "Module 4 — Passer à l’action",
-      completed: false,
-      quizUnlocked: false,
-      quizCompleted: false,
-      lessons: [
-        { title: "Checklist finale", type: "Vidéo", duration: "10 min", completed: false },
-        { title: "Optimisation", type: "Vidéo", duration: "22 min", completed: false },
-        { title: "Étude de cas", type: "Live", duration: "60 min", completed: false },
+        { title: "Hero section", type: "Vidéo", duration: "11 min" },
+        { title: "Blocs de preuve", type: "Live", duration: "50 min" },
+        { title: "Call-to-action", type: "Vidéo", duration: "13 min" },
       ],
     },
   ];
 
   const currentLesson = modules[currentModuleIndex].lessons[currentLessonIndex];
+  const lessonKey = `${currentModuleIndex}-${currentLessonIndex}`;
+  const isLessonCompleted = completedLessons[lessonKey];
+
+  const toggleModule = (index: number) => {
+    setExpandedModules(prev => ({ ...prev, [index]: !prev[index] }));
+  };
+
+  const handleMarkAsCompleted = () => {
+    setCompletedLessons(prev => ({ ...prev, [lessonKey]: true }));
+  };
+
+  const handleNextLesson = () => {
+    if (currentLessonIndex < modules[currentModuleIndex].lessons.length - 1) {
+      setCurrentLessonIndex(currentLessonIndex + 1);
+    } else if (currentModuleIndex < modules.length - 1) {
+      setCurrentModuleIndex(currentModuleIndex + 1);
+      setCurrentLessonIndex(0);
+      setExpandedModules(prev => ({ ...prev, [currentModuleIndex + 1]: true }));
+    }
+  };
+
+  const handlePrevLesson = () => {
+    if (currentLessonIndex > 0) {
+      setCurrentLessonIndex(currentLessonIndex - 1);
+    } else if (currentModuleIndex > 0) {
+      setCurrentModuleIndex(currentModuleIndex - 1);
+      setCurrentLessonIndex(modules[currentModuleIndex - 1].lessons.length - 1);
+      setExpandedModules(prev => ({ ...prev, [currentModuleIndex - 1]: true }));
+    }
+  };
 
   const resources = [
     { label: "Support PDF", type: "PDF", available: true },
@@ -81,356 +104,391 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
     "Une offre floue crée une conversion floue.",
   ];
 
+  // Calculate overall progress
+  const totalLessons = modules.reduce((acc, m) => acc + m.lessons.length, 0);
+  const completedCount = Object.keys(completedLessons).length;
+  const progressPercent = Math.round((completedCount / totalLessons) * 100);
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
-      <div className="flex min-h-screen">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar activeItem="Mes formations" onNavigate={onNavigate} />
 
         <div className="flex flex-1 overflow-hidden">
-          <aside className="flex w-[320px] shrink-0 flex-col border-r border-slate-200 bg-white">
-            <div className="border-b border-slate-200 px-5 py-5">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold text-white">
-                  NL
+          {/* COURSE SIDEBAR */}
+          <aside className="flex w-[380px] shrink-0 flex-col border-r border-slate-200 bg-white">
+            <div className="border-b border-slate-200 px-8 py-8">
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-lg font-bold text-white shadow-lg shadow-slate-900/20">
+                  FC
                 </div>
                 <div>
-                  <p className="text-sm text-slate-500">Formation en cours</p>
-                  <h1 className="text-lg font-semibold">Copywriting avancé</h1>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Formation</p>
+                  <h1 className="text-xl font-black tracking-tight text-slate-900">Copywriting avancé</h1>
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
-                <div className="mb-2 flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Progression globale</span>
-                  <span className="font-semibold">38%</span>
+              <div className="rounded-3xl bg-slate-50 p-6 ring-1 ring-slate-200">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Progression</span>
+                  <span className="text-sm font-black text-slate-900">{progressPercent}%</span>
                 </div>
-                <div className="h-2.5 w-full rounded-full bg-slate-200">
-                  <div className="h-2.5 rounded-full bg-slate-900" style={{ width: "38%" }} />
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div 
+                    className="h-full rounded-full bg-slate-900" 
+                    style={{ width: `${progressPercent}%` }} 
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 py-4">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-                  Modules & leçons
+            <div className="flex-1 overflow-y-auto px-6 py-8">
+              <div className="mb-6 flex items-center justify-between px-2">
+                <h2 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  Programme du cours
                 </h2>
-                <button className="text-xs font-semibold text-slate-500 hover:text-slate-900">
-                  Tout réduire
-                </button>
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-[10px] font-bold text-slate-600">
+                  {modules.length}
+                </div>
               </div>
 
               <div className="space-y-4">
-                {modules.map((module, moduleIndex) => (
-                  <div key={module.title} className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-                    <div className="border-b border-slate-200 bg-slate-50 px-4 py-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                            Module {moduleIndex + 1}
-                          </p>
-                          <h3 className="mt-1 text-sm font-semibold leading-6 text-slate-900">
-                            {module.title}
-                          </h3>
+                {modules.map((module, mIdx) => (
+                  <div key={module.title} className="overflow-hidden rounded-[32px] border border-slate-100 bg-white shadow-sm">
+                    <button 
+                      onClick={() => toggleModule(mIdx)}
+                      className="flex w-full items-center justify-between border-b border-slate-50 bg-slate-50/50 px-6 py-5 text-left"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-xs font-black text-slate-400 shadow-sm">
+                          {mIdx + 1}
                         </div>
-                        <StatusPill
-                          label={module.completed ? "Terminé" : moduleIndex === currentModuleIndex ? "En cours" : "À venir"}
-                          variant={module.completed ? "success" : moduleIndex === currentModuleIndex ? "active" : "default"}
-                        />
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Module {mIdx + 1}</p>
+                          <h3 className="text-sm font-bold text-slate-900">{module.title}</h3>
+                        </div>
                       </div>
-                    </div>
+                      {expandedModules[mIdx] ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+                    </button>
 
-                    <div className="space-y-2 p-3">
-                      {module.lessons.map((lesson, lessonIndex) => {
-                        const isCurrent = moduleIndex === currentModuleIndex && lessonIndex === currentLessonIndex;
-                        return (
-                          <button
-                            key={lesson.title}
-                            className={`w-full rounded-2xl border px-3 py-3 text-left transition ${
-                              isCurrent
-                                ? "border-slate-900 bg-slate-900 text-white"
-                                : lesson.completed
-                                ? "border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100"
-                                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="flex items-start gap-3">
-                                <div
-                                  className={`mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
-                                    isCurrent
-                                      ? "bg-white text-slate-900"
-                                      : lesson.completed
-                                      ? "bg-slate-900 text-white"
-                                      : "bg-slate-100 text-slate-600"
-                                  }`}
-                                >
-                                  {lesson.completed ? "✓" : lessonIndex + 1}
+                    {expandedModules[mIdx] && (
+                      <div className="space-y-1 p-3">
+                        {module.lessons.map((lesson, lIdx) => {
+                          const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+                          const isCompleted = completedLessons[`${mIdx}-${lIdx}`];
+                          return (
+                            <button
+                              key={lesson.title}
+                              onClick={() => {
+                                setCurrentModuleIndex(mIdx);
+                                setCurrentLessonIndex(lIdx);
+                              }}
+                              className={`group w-full rounded-[20px] px-4 py-4 text-left ${
+                                isCurrent
+                                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                                  : ""
+                              }`}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                                  isCurrent
+                                    ? "bg-white/20 text-white"
+                                    : isCompleted
+                                    ? "bg-emerald-100 text-emerald-600"
+                                    : "bg-slate-100 text-slate-400"
+                                }`}>
+                                  {isCompleted ? <CheckCircle className="h-4 w-4" /> : lIdx + 1}
                                 </div>
-                                <div>
-                                  <p className={`text-sm font-medium ${isCurrent ? "text-white" : "text-inherit"}`}>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`truncate text-sm font-bold ${isCurrent ? "text-white" : "text-slate-700"}`}>
                                     {lesson.title}
                                   </p>
-                                  <p className={`mt-1 text-xs ${isCurrent ? "text-slate-300" : "text-slate-500"}`}>
-                                    {lesson.type} • {lesson.duration}
-                                  </p>
+                                  <div className="mt-1 flex items-center gap-2">
+                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${isCurrent ? "text-white/60" : "text-slate-400"}`}>
+                                      {lesson.type}
+                                    </span>
+                                    <span className={`h-1 w-1 rounded-full ${isCurrent ? "bg-white/30" : "bg-slate-200"}`} />
+                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${isCurrent ? "text-white/60" : "text-slate-400"}`}>
+                                      {lesson.duration}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </button>
-                        );
-                      })}
+                            </button>
+                          );
+                        })}
 
-                      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-semibold text-slate-800">Quiz du module</p>
-                            <p className="mt-1 text-xs text-slate-500">
-                              {module.quizCompleted
-                                ? "Quiz validé"
-                                : module.quizUnlocked
-                                ? "Disponible"
-                                : "Débloqué après les leçons"}
-                            </p>
+                        {/* Quiz Item */}
+                        <button 
+                          onClick={onOpenQuiz}
+                          className="group mt-2 w-full rounded-[20px] border-2 border-dashed border-slate-100 bg-slate-50/50 px-4 py-5 text-left"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm group-hover:text-slate-900">
+                                <Lock className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-slate-900">Quiz final du module</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Valider pour continuer</p>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-slate-300" />
                           </div>
-                          <button
-                            onClick={onOpenQuiz}
-                            className={`rounded-xl px-3 py-2 text-xs font-semibold ${
-                              module.quizUnlocked
-                                ? "bg-slate-900 text-white"
-                                : "bg-slate-200 text-slate-500"
-                            }`}
-                          >
-                            Quiz
-                          </button>
-                        </div>
+                        </button>
                       </div>
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           </aside>
 
-          <main className="flex-1 overflow-y-auto px-8 py-6">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm text-slate-500">
-                  {modules[currentModuleIndex].title} <span className="mx-2">/</span> {currentLesson.title}
-                </p>
-                <h2 className="mt-1 text-3xl font-bold tracking-tight">{currentLesson.title}</h2>
+          {/* PLAYER MAIN AREA */}
+          <main className="flex flex-1 flex-col overflow-hidden bg-slate-50">
+            {/* Player Header */}
+            <header className="flex items-center justify-between border-b border-slate-200 bg-white px-10 py-6">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>{modules[currentModuleIndex].title}</span>
+                  <ChevronRight className="h-3 w-3" />
+                  <span className="text-slate-900">{currentLesson.title}</span>
+                </div>
+                <h2 className="mt-2 truncate text-3xl font-black tracking-tight text-slate-900">{currentLesson.title}</h2>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                  Leçon précédente
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={handlePrevLesson}
+                  className="flex items-center gap-2 rounded-2xl border-2 border-slate-100 bg-white px-6 py-3.5 text-sm font-bold text-slate-600"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Précédent
                 </button>
-                <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90">
-                  Leçon suivante
+                <button 
+                  onClick={handleNextLesson}
+                  className="flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-900/20"
+                >
+                  Suivant
+                  <ChevronRight className="h-4 w-4" />
                 </button>
+              </div>
+            </header>
+
+            <div className="flex-1 overflow-y-auto px-10 py-10">
+              <div className="mx-auto max-w-6xl space-y-10">
+                {/* MEDIA PLAYER SECTION */}
+                <section className="grid gap-8 xl:grid-cols-[1fr_380px]">
+                  <div className="space-y-6">
+                    <div className="relative aspect-video overflow-hidden rounded-[40px] bg-slate-900 shadow-2xl ring-1 ring-slate-200">
+                      {activeResource === "PDF" ? (
+                        <div className="flex h-full w-full flex-col items-center justify-center bg-slate-100 p-12 text-center">
+                          <div className="mb-6 rounded-3xl bg-white p-6 shadow-xl shadow-slate-200/50">
+                            <FileText className="h-16 w-16 text-slate-400" />
+                          </div>
+                          <h4 className="text-2xl font-black text-slate-900 tracking-tight">Support PDF</h4>
+                          <p className="mt-3 text-base font-medium text-slate-500 max-w-sm">
+                            Consultez le document de référence pour cette leçon directement ici.
+                          </p>
+                          <div className="mt-10 flex gap-4">
+                            <button className="flex items-center gap-2 rounded-2xl bg-slate-900 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-slate-900/20">
+                              <ExternalLink className="h-4 w-4" />
+                              Ouvrir le document
+                            </button>
+                            <button 
+                              onClick={() => setActiveResource(null)}
+                              className="rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-sm font-bold text-slate-700"
+                            >
+                              Retour à la vidéo
+                            </button>
+                          </div>
+                        </div>
+                      ) : activeResource === "Audio" ? (
+                        <div className="flex h-full w-full flex-col items-center justify-center bg-slate-900 p-12 text-center text-white">
+                          <div className="relative mb-10">
+                            <div className="absolute inset-0 rounded-full bg-white/5 blur-2xl" />
+                            <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-white/10 shadow-inner">
+                              <Headphones className="h-12 w-12 text-white" />
+                            </div>
+                          </div>
+                          <h4 className="text-2xl font-black tracking-tight">Version Audio</h4>
+                          <p className="mt-2 text-base font-medium text-slate-400">{currentLesson.title}</p>
+                          
+                          <div className="mt-12 w-full max-w-lg">
+                            <div className="group relative mb-6 h-2 w-full cursor-pointer rounded-full bg-white/10">
+                              <div className="h-full w-1/3 rounded-full bg-white" />
+                              <div className="absolute left-1/3 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-lg" />
+                            </div>
+                            <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
+                              <span>04:12</span>
+                              <span>14:00</span>
+                            </div>
+                            <div className="mt-10 flex items-center justify-center gap-12">
+                              <button className="text-white/40">
+                                <ChevronLeft className="h-8 w-8" />
+                              </button>
+                              <button className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl shadow-white/10">
+                                <Play className="h-8 w-8 fill-current" />
+                              </button>
+                              <button className="text-white/40">
+                                <ChevronRight className="h-8 w-8" />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <button 
+                            onClick={() => setActiveResource(null)}
+                            className="mt-12 text-[10px] font-black uppercase tracking-[0.2em] text-white/30"
+                          >
+                            Retour au lecteur vidéo
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="group relative flex h-full w-full items-center justify-center bg-slate-800">
+                          <div className="absolute inset-0 bg-slate-900/20" />
+                          <button className="relative flex h-24 w-24 items-center justify-center rounded-full bg-white text-slate-900 shadow-2xl">
+                            <Play className="h-10 w-10 fill-current" />
+                          </button>
+                          <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between text-white">
+                            <div className="flex items-center gap-6">
+                              <Volume2 className="h-6 w-6 cursor-pointer" />
+                              <span className="text-sm font-black tracking-widest">00:00 / {currentLesson.duration}</span>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <Settings className="h-6 w-6 cursor-pointer" />
+                              <ExternalLink className="h-6 w-6 cursor-pointer" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-3">
+                      <MiniStat label="Format" value={currentLesson.type} />
+                      <MiniStat label="Durée" value={currentLesson.duration} />
+                      <MiniStat label="Statut" value={isLessonCompleted ? "Terminé" : "En cours"} />
+                    </div>
+                  </div>
+
+                  {/* TASKS & COMPLETION */}
+                  <div className="space-y-6">
+                    <div className="rounded-[40px] border border-slate-200 bg-white p-8 shadow-sm">
+                      <h3 className="text-2xl font-black tracking-tight text-slate-900">Objectifs</h3>
+                      <p className="mt-2 text-sm font-medium text-slate-500">Complétez ces étapes pour valider la leçon.</p>
+                      
+                      <div className="mt-8 space-y-4">
+                        <TaskItem label="Regarder la vidéo" done={isLessonCompleted} />
+                        <TaskItem label="Télécharger le support" done={false} />
+                        <TaskItem label="Prendre des notes" done={false} />
+                      </div>
+
+                      <button 
+                        onClick={handleMarkAsCompleted}
+                        disabled={isLessonCompleted}
+                        className={`mt-10 w-full rounded-[24px] py-5 text-sm font-black uppercase tracking-widest ${
+                          isLessonCompleted
+                            ? "bg-emerald-100 text-emerald-600 cursor-default"
+                            : "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+                        }`}
+                      >
+                        {isLessonCompleted ? "Leçon terminée ✓" : "Marquer comme terminé"}
+                      </button>
+                    </div>
+
+                    <div className="rounded-[40px] bg-slate-900 p-8 text-white shadow-xl">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-emerald-400">
+                        <Award className="h-6 w-6" />
+                      </div>
+                      <h3 className="mt-6 text-xl font-bold">Prochaine étape</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-slate-400">
+                        Une fois ce module terminé, vous débloquerez le quiz final pour obtenir votre certification.
+                      </p>
+                      <button 
+                        onClick={handleNextLesson}
+                        className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-bold text-slate-900"
+                      >
+                        Leçon suivante
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* RESOURCES & NOTES */}
+                <section className="grid gap-8 xl:grid-cols-[1fr_450px]">
+                  <div className="rounded-[40px] border border-slate-200 bg-white p-10 shadow-sm">
+                    <div className="mb-8 flex items-center gap-4 border-b border-slate-100 pb-6">
+                      <TabButton label="Ressources" active onClick={onOpenResources} />
+                      <TabButton label="Discussion" />
+                      <TabButton label="Avis" />
+                    </div>
+
+                    <div className="space-y-4">
+                      {resources.map((resource) => (
+                        <div
+                          key={resource.label}
+                          className="group flex items-center justify-between rounded-[28px] border border-slate-50 bg-slate-50/50 p-5"
+                        >
+                          <div className="flex items-center gap-5">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-sm">
+                              {resource.type === "PDF" ? <FileText className="h-6 w-6" /> : resource.type === "Audio" ? <Headphones className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                            </div>
+                            <div>
+                              <p className="text-base font-bold text-slate-900">{resource.label}</p>
+                              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">{resource.type}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => resource.available && setActiveResource(resource.type)}
+                              className={`rounded-xl px-5 py-2.5 text-xs font-black uppercase tracking-widest ${
+                                resource.available
+                                  ? "bg-white text-slate-600 shadow-sm"
+                                  : "bg-transparent text-slate-300 cursor-not-allowed"
+                              }`}
+                            >
+                              {resource.available ? "Aperçu" : "Bloqué"}
+                            </button>
+                            <button
+                              disabled={!resource.available}
+                              className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                                resource.available
+                                  ? "bg-slate-900 text-white"
+                                  : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                              }`}
+                            >
+                              <Download className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-[40px] border border-slate-200 bg-white p-10 shadow-sm">
+                    <div className="mb-8 flex items-center justify-between">
+                      <h3 className="text-2xl font-black tracking-tight text-slate-900">Notes</h3>
+                      <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                        <StickyNote className="h-5 w-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {notes.map((note, i) => (
+                        <div key={i} className="relative rounded-3xl bg-slate-50 p-6 text-sm font-medium leading-relaxed text-slate-600 ring-1 ring-slate-100">
+                          <div className="absolute -left-1 top-1/2 h-8 w-1 -translate-y-1/2 rounded-full bg-slate-900" />
+                          {note}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button className="mt-8 w-full rounded-[24px] border-2 border-slate-100 bg-white py-5 text-sm font-black uppercase tracking-widest text-slate-900">
+                      Ajouter une note
+                    </button>
+                  </div>
+                </section>
               </div>
             </div>
-
-            <section className="mb-6 grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-              <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex flex-wrap items-center gap-2">
-                  <Badge label={currentLesson.type} />
-                  <Badge label={currentLesson.duration} subtle />
-                  <Badge label="Module 2" subtle />
-                </div>
-
-                <div className="relative aspect-video overflow-hidden rounded-[24px] bg-slate-900 shadow-inner ring-1 ring-slate-200">
-                  {activeResource === "PDF" ? (
-                    <div className="flex h-full w-full flex-col items-center justify-center bg-slate-100 p-8 text-center">
-                      <div className="mb-4 rounded-2xl bg-white p-4 shadow-sm">
-                        <FileText className="h-12 w-12 text-slate-400" />
-                      </div>
-                      <h4 className="text-lg font-bold">Aperçu du support PDF</h4>
-                      <p className="mt-2 text-sm text-slate-500 max-w-xs">
-                        Le document "Structurer une offre.pdf" est prêt à être consulté.
-                      </p>
-                      <div className="mt-6 flex gap-3">
-                        <button className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90">
-                          Ouvrir dans un nouvel onglet
-                        </button>
-                        <button 
-                          onClick={() => setActiveResource(null)}
-                          className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                        >
-                          Retour à la vidéo
-                        </button>
-                      </div>
-                    </div>
-                  ) : activeResource === "Audio" ? (
-                    <div className="flex h-full w-full flex-col items-center justify-center bg-slate-900 p-8 text-center text-white">
-                      <div className="mb-6 flex h-20 w-20 animate-pulse items-center justify-center rounded-full bg-white/10">
-                        <Headphones className="h-10 w-10 text-white" />
-                      </div>
-                      <h4 className="text-xl font-bold">Écoute de la version audio</h4>
-                      <p className="mt-2 text-sm text-slate-400">Leçon 4 : Structurer une offre</p>
-                      
-                      <div className="mt-8 w-full max-w-md">
-                        <div className="mb-4 h-1.5 w-full rounded-full bg-white/10">
-                          <div className="h-1.5 w-1/3 rounded-full bg-white" />
-                        </div>
-                        <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                          <span>04:12</span>
-                          <span>14:00</span>
-                        </div>
-                        <div className="mt-6 flex items-center justify-center gap-8">
-                          <button className="text-white/60 hover:text-white transition">
-                            <ChevronLeft className="h-6 w-6" />
-                          </button>
-                          <button className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 transition hover:scale-105">
-                            <Play className="h-6 w-6 fill-current" />
-                          </button>
-                          <button className="text-white/60 hover:text-white transition">
-                            <ChevronRight className="h-6 w-6" />
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <button 
-                        onClick={() => setActiveResource(null)}
-                        className="mt-10 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition"
-                      >
-                        Retour au lecteur vidéo
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="group relative flex h-full w-full items-center justify-center bg-slate-200">
-                      <div className="absolute inset-0 bg-slate-900/10 transition group-hover:bg-slate-900/20" />
-                      <button className="relative flex h-20 w-20 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition hover:scale-110">
-                        <Play className="h-8 w-8 fill-current" />
-                      </button>
-                      <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
-                        <div className="flex items-center gap-4">
-                          <Volume2 className="h-5 w-5" />
-                          <span className="text-sm font-bold">00:00 / {currentLesson.duration}</span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <Settings className="h-5 w-5" />
-                          <ExternalLink className="h-5 w-5" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-5 grid gap-4 md:grid-cols-3">
-                  <MiniStat label="Type" value={currentLesson.type} />
-                  <MiniStat label="Durée" value={currentLesson.duration} />
-                  <MiniStat label="Statut" value="En cours" />
-                </div>
-              </div>
-
-              <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="text-xl font-bold">À faire sur cette leçon</h3>
-                <div className="mt-4 space-y-3">
-                  <TaskItem label="Regarder la vidéo jusqu’au bout" done />
-                  <TaskItem label="Télécharger le support PDF" />
-                  <TaskItem label="Écouter la version audio" />
-                  <TaskItem label="Prendre des notes" />
-                </div>
-
-                <button className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90">
-                  Marquer comme terminé
-                </button>
-              </div>
-            </section>
-
-            <section className="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
-              <div className="space-y-6">
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="mb-4 flex items-center gap-3">
-                    <TabButton label="Ressources" active onClick={onOpenResources} />
-                    <TabButton label="Notes" />
-                    <TabButton label="Discussion" />
-                  </div>
-
-                  <div className="space-y-3">
-                    {resources.map((resource) => (
-                      <div
-                        key={resource.label}
-                        className="flex flex-col gap-3 rounded-2xl border border-slate-200 px-4 py-4 md:flex-row md:items-center md:justify-between transition hover:border-slate-300 hover:bg-slate-50/50"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-                            {resource.type === "PDF" ? <FileText className="h-5 w-5" /> : resource.type === "Audio" ? <Headphones className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-900">{resource.label}</p>
-                            <p className="mt-0.5 text-xs font-medium text-slate-500">Format : {resource.type}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => resource.available && setActiveResource(resource.type)}
-                            className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
-                              resource.available
-                                ? "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                                : "bg-slate-50 text-slate-300 cursor-not-allowed"
-                            }`}
-                          >
-                            {resource.available ? "Aperçu" : "Indisponible"}
-                          </button>
-                          <button
-                            disabled={!resource.available}
-                            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
-                              resource.available
-                                ? "bg-slate-900 text-white hover:opacity-90"
-                                : "bg-slate-200 text-slate-400 cursor-not-allowed"
-                            }`}
-                          >
-                            <Download className="h-3.5 w-3.5" />
-                            {resource.available ? "Télécharger" : "Bloqué"}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Description de la leçon</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">
-                    Dans cette leçon, vous allez apprendre à donner une forme claire à votre offre.
-                    L’objectif n’est pas de faire joli, mais de rendre la proposition compréhensible,
-                    crédible et désirable pour la bonne audience.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Notes rapides</h3>
-                  <div className="mt-4 space-y-3">
-                    {notes.map((note) => (
-                      <div key={note} className="rounded-2xl bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-700">
-                        {note}
-                      </div>
-                    ))}
-                  </div>
-                  <button className="mt-4 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-                    Ajouter une note
-                  </button>
-                </div>
-
-                <div className="rounded-[28px] border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-                    Après cette leçon
-                  </p>
-                  <h3 className="mt-2 text-2xl font-bold">Étape suivante</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">
-                    Continuez avec “Éviter les objections”. Une fois toutes les leçons du module terminées,
-                    le quiz du module sera débloqué automatiquement.
-                  </p>
-                  <button className="mt-5 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:opacity-90">
-                    Aller à la prochaine leçon
-                  </button>
-                </div>
-              </div>
-            </section>
           </main>
         </div>
       </div>
@@ -438,54 +496,26 @@ export default function LessonPlayerPage({ onOpenQuiz, onOpenResources, onNaviga
   );
 }
 
-function StatusPill({
-  label,
-  variant = "default",
-}: {
-  label: string;
-  variant?: "default" | "active" | "success";
-}) {
-  const styles = {
-    default: "bg-slate-200 text-slate-600",
-    active: "bg-slate-900 text-white",
-    success: "bg-slate-900 text-white",
-  };
-
-  return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${styles[variant]}`}>{label}</span>;
-}
-
-function Badge({ label, subtle = false }: { label: string; subtle?: boolean }) {
-  return (
-    <span
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-        subtle ? "border border-slate-200 bg-white text-slate-600" : "bg-slate-900 text-white"
-      }`}
-    >
-      {label}
-    </span>
-  );
-}
-
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-lg font-semibold text-slate-900">{value}</p>
+    <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
+      <p className="mt-1 text-lg font-black text-slate-900">{value}</p>
     </div>
   );
 }
 
 function TaskItem({ label, done = false }: { label: string; done?: boolean }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-4">
+    <div className={`flex items-center gap-4 rounded-2xl p-4 ${done ? "bg-emerald-50/50" : "bg-slate-50"}`}>
       <div
-        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
-          done ? "bg-slate-900 text-white" : "bg-white text-slate-500 ring-1 ring-slate-200"
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black ${
+          done ? "bg-emerald-500 text-white" : "bg-white text-slate-300 shadow-sm"
         }`}
       >
-        {done ? "✓" : "•"}
+        {done ? <CheckCircle className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
       </div>
-      <p className="text-sm text-slate-700">{label}</p>
+      <p className={`text-sm font-bold ${done ? "text-emerald-700" : "text-slate-600"}`}>{label}</p>
     </div>
   );
 }
@@ -494,11 +524,12 @@ function TabButton({ label, active = false, onClick }: { label: string; active?:
   return (
     <button
       onClick={onClick}
-      className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
-        active ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+      className={`relative px-4 py-2 text-sm font-black uppercase tracking-widest ${
+        active ? "text-slate-900" : "text-slate-400"
       }`}
     >
       {label}
+      {active && <div className="absolute -bottom-6 left-0 h-1 w-full rounded-full bg-slate-900" />}
     </button>
   );
 }

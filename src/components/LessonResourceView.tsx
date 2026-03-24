@@ -15,7 +15,7 @@ export default function LessonResourceView({ onBack, onNavigate }: { onBack?: ()
           <div className="mx-auto max-w-5xl">
             <button
               onClick={onBack}
-              className="mb-6 flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900"
+              className="mb-6 flex items-center gap-2 text-sm font-semibold text-slate-500"
             >
               ← Retour à la leçon
             </button>
@@ -35,16 +35,16 @@ export default function LessonResourceView({ onBack, onNavigate }: { onBack?: ()
             <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
               {/* LIVE VIEW */}
               {activeTab === "live" && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div>
                   <h2 className="mb-4 text-xl font-bold">Session live / replay</h2>
                   <div className="flex aspect-video items-center justify-center rounded-[24px] bg-slate-200 text-sm font-medium text-slate-500">
                     Player Live / Replay
                   </div>
                   <div className="mt-6 flex gap-3">
-                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white">
                       Rejoindre le live
                     </button>
-                    <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700">
                       Voir le replay
                     </button>
                   </div>
@@ -53,16 +53,16 @@ export default function LessonResourceView({ onBack, onNavigate }: { onBack?: ()
 
               {/* PDF VIEW */}
               {activeTab === "pdf" && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div>
                   <h2 className="mb-4 text-xl font-bold">Support PDF</h2>
                   <div className="flex h-[600px] items-center justify-center rounded-[24px] bg-slate-200 text-sm font-medium text-slate-500">
                     Viewer PDF
                   </div>
                   <div className="mt-6 flex gap-3">
-                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white">
                       Télécharger
                     </button>
-                    <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    <button className="rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700">
                       Ouvrir en plein écran
                     </button>
                   </div>
@@ -71,13 +71,13 @@ export default function LessonResourceView({ onBack, onNavigate }: { onBack?: ()
 
               {/* AUDIO VIEW */}
               {activeTab === "audio" && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div>
                   <h2 className="mb-4 text-xl font-bold">Version audio</h2>
                   <div className="flex items-center justify-center rounded-[24px] bg-slate-200 p-10 text-sm font-medium text-slate-500">
                     Player Audio
                   </div>
                   <div className="mt-6 flex gap-3">
-                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                    <button className="rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white">
                       Télécharger audio
                     </button>
                   </div>
@@ -95,8 +95,8 @@ function Tab({ label, active, onClick }: { label: string; active: boolean; onCli
   return (
     <button
       onClick={onClick}
-      className={`rounded-2xl px-6 py-2.5 text-sm font-semibold transition ${
-        active ? "bg-slate-900 text-white shadow-md shadow-slate-200" : "bg-slate-200 text-slate-600 hover:bg-slate-300"
+      className={`rounded-2xl px-6 py-2.5 text-sm font-semibold ${
+        active ? "bg-slate-900 text-white shadow-md shadow-slate-200" : "bg-slate-200 text-slate-600"
       }`}
     >
       {label}

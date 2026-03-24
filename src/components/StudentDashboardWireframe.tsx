@@ -117,19 +117,19 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
               </div>
               <button 
                 onClick={() => onNavigate?.("notifications")}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 transition"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 🔔
               </button>
               <button 
                 onClick={() => onNavigate?.("messaging")}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 transition"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 💬
               </button>
               <button 
                 onClick={() => onNavigate?.("profile")}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm hover:bg-slate-50 transition"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 👤
               </button>
@@ -151,10 +151,10 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
                     découvrez comment fonctionne la plateforme et lancez votre première leçon.
                   </p>
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <button className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                    <button className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
                       Découvrir mes formations
                     </button>
-                    <button className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                    <button className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700">
                       Voir comment ça marche
                     </button>
                   </div>
@@ -202,7 +202,7 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
                     </div>
                   </div>
 
-                  <button className="mt-6 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                  <button className="mt-6 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
                     Continuer
                   </button>
                 </div>
@@ -215,11 +215,11 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
               <div
                 key={stat.label}
                 onClick={() => stat.label.includes("Certificat") && onNavigate?.("certificates")}
-                className={`rounded-3xl bg-white p-5 shadow-sm transition-all ${
+                className={`rounded-3xl bg-white p-5 shadow-sm ${
                   isNewStudent
                     ? "border border-dashed border-slate-300"
                     : "border border-slate-200"
-                } ${stat.label.includes("Certificat") ? "cursor-pointer hover:border-slate-900 hover:shadow-md" : ""}`}
+                } ${stat.label.includes("Certificat") ? "cursor-pointer" : ""}`}
               >
                 <div className="text-3xl font-bold">{stat.value}</div>
                 <div className="mt-2 text-sm text-slate-500">{stat.label}</div>
@@ -232,7 +232,7 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
               <h3 className="text-xl font-bold">
                 {isNewStudent ? "Découvrez vos formations" : "Mes formations"}
               </h3>
-              <button className="text-sm font-medium text-slate-500 hover:text-slate-900">
+              <button className="text-sm font-medium text-slate-500">
                 Voir tout
               </button>
             </div>
@@ -272,11 +272,11 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
                     <div className="mt-5 flex gap-2">
                       <button 
                         onClick={onViewCourse}
-                        className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                        className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700"
                       >
                         Voir les détails
                       </button>
-                      <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+                      <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white">
                         🛒
                       </button>
                     </div>
@@ -314,7 +314,7 @@ export default function StudentDashboardWireframe({ onViewCourse, onNavigate }: 
                       Preview
                     </div>
                     <p className="font-medium">{item}</p>
-                    <button className="mt-3 text-sm font-semibold text-slate-600 hover:text-slate-900">
+                    <button className="mt-3 text-sm font-semibold text-slate-600">
                       Voir détail
                     </button>
                   </div>

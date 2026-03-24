@@ -93,7 +93,7 @@ export default function CheckoutCoursePage({
           <div className="mb-6 flex items-center gap-3 text-sm text-slate-500">
             <button 
               onClick={onBackToDashboard}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-50 shadow-sm"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 shadow-sm"
             >
               <ArrowLeft className="h-4 w-4" />
               Retour au dashboard
@@ -119,11 +119,11 @@ export default function CheckoutCoursePage({
             <section className="space-y-6">
               <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm overflow-hidden">
                 <div className="grid gap-6 lg:grid-cols-[160px_1fr] lg:items-center">
-                  <div className="flex h-40 items-center justify-center rounded-[24px] bg-slate-200 text-sm font-medium text-slate-500 overflow-hidden relative group">
+                  <div className="flex h-40 items-center justify-center rounded-[24px] bg-slate-200 text-sm font-medium text-slate-500 overflow-hidden relative">
                     <img 
                       src="https://picsum.photos/seed/copywriting/400/400" 
                       alt="Cover" 
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                      className="h-full w-full object-cover"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-slate-900/10" />
@@ -164,10 +164,10 @@ export default function CheckoutCoursePage({
                   {paymentMethods.map((method) => (
                     <div
                       key={method.id}
-                      className={`rounded-[24px] border p-5 transition cursor-pointer ${
+                      className={`rounded-[24px] border p-5 cursor-pointer ${
                         method.recommended
                           ? "border-slate-900 bg-slate-900 text-white"
-                          : "border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-300"
+                          : "border-slate-200 bg-slate-50 text-slate-900"
                       }`}
                     >
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -195,10 +195,10 @@ export default function CheckoutCoursePage({
                         </div>
 
                         <button
-                          className={`rounded-2xl px-5 py-3 text-sm font-bold transition ${
+                          className={`rounded-2xl px-5 py-3 text-sm font-bold ${
                             method.recommended
-                              ? "bg-white text-slate-900 hover:opacity-90"
-                              : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-100"
+                              ? "bg-white text-slate-900"
+                              : "border border-slate-300 bg-white text-slate-800"
                           }`}
                         >
                           Payer avec {method.name}
@@ -275,13 +275,13 @@ export default function CheckoutCoursePage({
                   <p className="text-sm leading-6 text-slate-300">
                     Dans le produit final, ce bouton peut ouvrir Polar en priorité, puis proposer PayPal en alternative selon le scénario choisi.
                   </p>
-                  <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-100">
+                  <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-bold text-slate-900">
                     <CreditCard className="h-4 w-4" />
                     Continuer vers le paiement
                   </button>
                 </div>
                 {/* Subtle background glow */}
-                <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
+                <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/5" />
               </div>
             </aside>
           </div>
@@ -324,7 +324,7 @@ function MiniInfo({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition hover:shadow-md">
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
       <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-600 ring-1 ring-slate-200 shadow-sm">
         {icon}
       </div>

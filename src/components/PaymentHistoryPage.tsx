@@ -69,7 +69,7 @@ export default function PaymentHistoryPage({
             <div className="mb-6 flex items-center gap-2 text-sm text-slate-500">
               <button 
                 onClick={onBackToDashboard}
-                className="flex items-center gap-1 hover:text-slate-900 transition"
+                className="flex items-center gap-1 text-slate-500"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Dashboard
@@ -90,7 +90,7 @@ export default function PaymentHistoryPage({
                 <input 
                   type="text" 
                   placeholder="Rechercher une facture..." 
-                  className="rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                  className="rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
                 />
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function PaymentHistoryPage({
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {mockTransactions.map((trx) => (
-                      <tr key={trx.id} className="group hover:bg-slate-50/50 transition">
+                      <tr key={trx.id} className="group bg-white">
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
@@ -176,7 +176,7 @@ export default function PaymentHistoryPage({
                         <td className="px-6 py-5 text-right">
                           <button 
                             disabled={trx.status !== "completed"}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             <Download className="h-4 w-4" />
                           </button>
@@ -202,7 +202,7 @@ export default function PaymentHistoryPage({
                     </p>
                   </div>
                 </div>
-                <button className="rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-900 transition hover:opacity-90">
+                <button className="rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-900">
                   Contacter le support
                 </button>
               </div>
