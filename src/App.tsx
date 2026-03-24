@@ -19,16 +19,32 @@ export default function App() {
   const [lastQuizResult, setLastQuizResult] = useState<any>(null);
   const componentRef = useRef<HTMLDivElement>(null);
 
-  const exportHTML = () => {
+  const exportHTML = async () => {
     if (componentRef.current) {
       // Collect all styles from the current document
       const styleTags = Array.from(document.getElementsByTagName('style'))
         .map(style => style.outerHTML)
         .join('\n');
       
-      const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-        .map(link => link.outerHTML)
-        .join('\n');
+      // Fetch and inline external stylesheets for portability
+      const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
+      let inlinedStyles = '';
+      
+      for (const link of linkElements) {
+        try {
+          const response = await fetch(link.href);
+          if (response.ok) {
+            const cssText = await response.text();
+            inlinedStyles += `<style>\n${cssText}\n</style>\n`;
+          } else {
+            // Fallback to original link tag if fetch fails
+            inlinedStyles += link.outerHTML + '\n';
+          }
+        } catch (e) {
+          console.error('Failed to inline stylesheet:', link.href, e);
+          inlinedStyles += link.outerHTML + '\n';
+        }
+      }
 
       // Create a clean clone of the component to export
       const clone = componentRef.current.cloneNode(true) as HTMLElement;
@@ -42,7 +58,7 @@ export default function App() {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  ${linkTags}
+  ${inlinedStyles}
   ${styleTags}
   <style>
     :root {
@@ -211,7 +227,7 @@ export default function App() {
               </div>
 
               <div className="rounded-3xl bg-slate-50 p-6 text-sm font-medium text-slate-600 ring-1 ring-slate-100">
-                <strong>Note :</strong> Le fichier <code className="text-slate-900">vercel.json</code> a déjà été ajouté à la racine pour assurer le bon fonctionnement des routes.
+                <strong>Note :</strong> L'export HTML inclut désormais tout le CSS (inliné) pour garantir un affichage parfait, même hors ligne ou sur un autre serveur.
               </div>
 
               <button
